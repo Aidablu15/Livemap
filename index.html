@@ -1,0 +1,77 @@
+<!-- Fly Equinox Interactive Leaflet.js Route Map (No Google Maps) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha512-sA+ePs8U8X6E4xPZ7cW2Zje16HYK3+GCzSUePfG9MNFViJ9qGDKXWz2apZkwO1yKnQxYgOQp5tnO+5cK3kN2aw==" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdlDX7ZQiaH6gYqK3Zg9e+URcN+NzoUJljkA0hFS2Ae7lbz8myv8I5K92t9eW7CkdK5o4hE2lEQ==" crossorigin=""></script>
+
+<div id="map" style="height: 600px; border-radius: 16px; overflow: hidden; z-index: 0;"></div>
+
+<style>
+  #map {
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    margin-top: 30px;
+    border: 3px solid white;
+  }
+</style>
+
+<script>
+  const map = L.map('map', {
+    zoomSnap: 0.5,
+    scrollWheelZoom: false
+  }).setView([-26.133, 28.242], 2.5); // Centered on Johannesburg
+
+  // Dark-themed basemap (CartoDB Dark Matter)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CartoDB',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Marker style
+  const markerIcon = L.circleMarker;
+
+  // Airports
+  const airports = [
+    { name: "Johannesburg (FAOR)", coords: [-26.133, 28.242], color: '#ffcc00' },
+    { name: "Cape Town (FACT)", coords: [-33.969, 18.597], color: '#ffffff' },
+    { name: "Durban (FALE)", coords: [-29.614, 31.119], color: '#ffffff' },
+    { name: "London Heathrow (EGLL)", coords: [51.4706, -0.4619], color: '#ffffff' },
+    { name: "New York JFK (KJFK)", coords: [40.6413, -73.7781], color: '#ffffff' },
+    { name: "Singapore Changi (WSSS)", coords: [1.3644, 103.9915], color: '#ffffff' },
+  ];
+
+  airports.forEach(airport => {
+    L.circleMarker(airport.coords, {
+      radius: 6,
+      color: airport.color,
+      fillColor: airport.color,
+      fillOpacity: 1
+    }).addTo(map).bindTooltip(airport.name, { permanent: false, direction: 'top' });
+  });
+
+  // Flight paths (example connections from Johannesburg)
+  const routes = [
+    [airports[0].coords, airports[1].coords], // FAOR → FACT
+    [airports[0].coords, airports[2].coords], // FAOR → FALE
+    [airports[0].coords, airports[3].coords], // FAOR → EGLL
+    [airports[0].coords, airports[4].coords], // FAOR → KJFK
+    [airports[0].coords, airports[5].coords], // FAOR → WSSS
+  ];
+
+  routes.forEach(route => {
+    L.polyline(route, {
+      color: '#00d0ff',
+      weight: 2,
+      opacity: 0.8,
+      dashArray: '5, 10'
+    }).addTo(map);
+  });
+</script>
+
+<!-- INSTRUCTIONS:
+1. This map uses Leaflet.js with CartoDB Dark Matter tiles.
+2. To add a new destination:
+   - Add a new airport entry in the `airports` array
+   - Add a new line in the `routes` array from airports[0] (Johannesburg) to the new one
+3. You can customize colors, sizes, or add interactivity easily
+4. Paste this into your Wix site using an HTML embed element
+-->
